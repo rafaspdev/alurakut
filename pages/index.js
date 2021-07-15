@@ -51,7 +51,7 @@ export default function Home() {
     'marcobrunodev',
     'felipefialho',
   ];
-
+  // use state e use effect
   const [ community, setCommunity] = useState([]); 
 
   useEffect(() => {
