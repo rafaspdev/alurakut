@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import MainGrid from '../src/components/MainGrid'
 import Box from '../src/components/Box'
 import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommons';
@@ -22,10 +22,21 @@ function ProfileSidebar(propriedades) {
   )
 }
 
+
+function ProfileRelationsBox(props) {
+  return(
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">
+        {props.title} ({props.items.length})
+      </h2>
+    </ProfileRelationsBoxWrapper>
+  );
+}
+
 export default function Home() {
   const usuarioAleatorio = 'rafaspdev';
   const [comunidades, setComunidades] = React.useState([{
-    id: '12802378123789378912789789123896123', 
+    id: '12802378123789378912789789123896123',
     title: 'Eu odeio acordar cedo',
     image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'
   }]);
@@ -41,13 +52,23 @@ export default function Home() {
     'felipefialho',
   ];
 
-  const followers = fetch('https://api.github.com/users/rafaspdev/followers')
-    .then( function (res) {
-      return res.json();
+  const [ community, setCommunity] = useState([]); 
+
+  useEffect(() => {
+    fetch('http://api.github.com/users/peas/followers')
+    .then((res) => {
+      if(res.ok) {
+        return res.json();
+      }
+      throw new Error("Algum problema aconteceu" + res.status);
     })
-    .then( function (res) {
-      console.log(res);
-    });
+    .then((res) => {
+      setCommunity(res);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  }, []);
 
   return (
     <>
@@ -59,7 +80,7 @@ export default function Home() {
         <div className="welcomeArea" style={{ gridArea: 'welcomeArea' }}>
           <Box>
             <h1 className="title">
-              Bem vindo(a) 
+              Bem vindo(a)
             </h1>
 
             <OrkutNostalgicIconSet />
@@ -68,19 +89,19 @@ export default function Home() {
           <Box>
             <h2 className="subTitle">O que você deseja fazer?</h2>
             <form onSubmit={function handleCriaComunidade(e) {
-                e.preventDefault();
-                const dadosDoForm = new FormData(e.target);
+              e.preventDefault();
+              const dadosDoForm = new FormData(e.target);
 
-                console.log('Campo: ', dadosDoForm.get('title'));
-                console.log('Campo: ', dadosDoForm.get('image'));
+              console.log('Campo: ', dadosDoForm.get('title'));
+              console.log('Campo: ', dadosDoForm.get('image'));
 
-                const comunidade = {
-                  id: new Date().toISOString(),
-                  title: dadosDoForm.get('title'),
-                  image: dadosDoForm.get('image'),
-                }
-                const comunidadesAtualizadas = [...comunidades, comunidade];
-                setComunidades(comunidadesAtualizadas)
+              const comunidade = {
+                id: new Date().toISOString(),
+                title: dadosDoForm.get('title'),
+                image: dadosDoForm.get('image'),
+              }
+              const comunidadesAtualizadas = [...comunidades, comunidade];
+              setComunidades(comunidadesAtualizadas)
             }}>
               <div>
                 <input
@@ -88,7 +109,7 @@ export default function Home() {
                   name="title"
                   aria-label="Qual vai ser o nome da sua comunidade?"
                   type="text"
-                  />
+                />
               </div>
               <div>
                 <input
@@ -105,23 +126,8 @@ export default function Home() {
           </Box>
         </div>
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
-          <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">
-              Comunidades ({comunidades.length})
-            </h2>
-            <ul>
-              {comunidades.map((itemAtual) => {
-                return (
-                  <li key={itemAtual.id}>
-                    <a href={`/users/${itemAtual.title}`}>
-                      <img src={itemAtual.image} />
-                      <span>{itemAtual.title}</span>
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
-          </ProfileRelationsBoxWrapper>
+
+          <ProfileRelationsBox title="Seguidores" items={community}/>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
               Pessoas da comunidade ({pessoasFavoritas.length})
