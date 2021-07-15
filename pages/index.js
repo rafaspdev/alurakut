@@ -23,17 +23,15 @@ function ProfileSidebar(propriedades) {
 }
 
 export default function Home() {
-  const usuarioAleatorio = 'omariosouto';
+  const usuarioAleatorio = 'rafaspdev';
   const [comunidades, setComunidades] = React.useState([{
     id: '12802378123789378912789789123896123', 
     title: 'Eu odeio acordar cedo',
     image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'
   }]);
-  // const comunidades = comunidades[0];
-  // const alteradorDeComunidades/setComunidades = comunidades[1];
 
-  console.log('Nosso teste', );
-  // const comunidades = ['Alurakut'];
+
+
   const pessoasFavoritas = [
     'juunegreiros',
     'omariosouto',
@@ -41,13 +39,20 @@ export default function Home() {
     'rafaballerini',
     'marcobrunodev',
     'felipefialho',
-  ]
+  ];
+
+  const followers = fetch('https://api.github.com/users/rafaspdev/followers')
+    .then( function (res) {
+      return res.json();
+    })
+    .then( function (res) {
+      console.log(res);
+    });
 
   return (
     <>
       <AlurakutMenu />
       <MainGrid>
-        {/* <Box style="grid-area: profileArea;"> */}
         <div className="profileArea" style={{ gridArea: 'profileArea' }}>
           <ProfileSidebar githubUser={usuarioAleatorio} />
         </div>
